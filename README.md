@@ -123,7 +123,7 @@ public class Main {
 }
 ```
 
-```java
+```bash
 javac Main.java
 ```
 
@@ -241,7 +241,7 @@ LoadModule proxy_http_module modules/mod_proxy_http.so
 
 **Dockerfile:**
 
-```java
+```docker
 FROM httpd:2.4
 COPY ./httpd.conf /usr/local/apache2/conf/httpd-custom.conf
 COPY ./public-html/ /usr/local/apache2/htdocs/
@@ -318,3 +318,92 @@ docker login -u nogellex
 docker tag devops-database nogellex/tp1:1.0
 docker push nogellex/tp1:1.0
 ```
+
+# TP2
+
+## CI
+**Create a .github/workflows directory in your repository on GitHub.**
+**main.yaml:**
+```yaml
+name: CI devops 2023
+on:
+  #to begin you want to launch this job in main and develop
+  push:
+    branches: [master, develop]
+  pull_request:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-22.04
+    steps:
+      #checkout your github code using actions/checkout@v2.5.0
+      - uses: actions/checkout@v2.5.0
+
+      #do the same with another action (actions/setup-java@v3) that enable to setup jdk 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      #finally build your app with the latest command
+      - name: Build and test with Maven
+        run: mvn clean verify --file TP1_2/simple-api-student-main/pom.xml
+```
+![CI.png](images/CI.png)
+
+## CD
+![secrets.png](images%2Fsecrets.png)
+
+**add in main.yaml:**
+```yaml
+  # define job to build and publish docker image
+  build-and-push-docker-image:
+    needs: test-backend
+    # run only when code is compiling and tests are passing
+    runs-on: ubuntu-22.04
+
+    # steps to perform in job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image and push backend
+        uses: docker/build-push-action@v3
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: ./TP1_2/simple-api-student-main
+          # Note: tags has to be all lower-case
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-devops-simple-api-main:latest
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Build image and push database
+        uses: docker/build-push-action@v3
+        with:
+          context: ./TP1
+
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-database:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v3
+        with:
+          context: ./TP1_http
+
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-http:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
+```
+![CD.png](images%2FCD.png)
+## Sonar
+
+**Change**
+`run: mvn clean verify --file TP1_2/simple-api-student-main/pom.xml`
+**by**
+`run: mvn -B verify sonar:sonar -Dsonar.projectKey=Nogellex_DevOps -Dsonar.organization=nogellex -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./TP1_2/simple-api-student-main/pom.xml`
+**in main.yaml**
+
+![Sonar.png](images%2FSonar.png)
