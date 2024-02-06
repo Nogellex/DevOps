@@ -321,6 +321,10 @@ docker push nogellex/tp1:1.0
 
 # TP2
 
+- 2-1 What are testcontainers?
+
+  Testcontainers are lightweight libraries with an API for completing integration test with services inside containers
+
 ## CI
 **Create a .github/workflows directory in your repository on GitHub.**
 **main.yaml:**
