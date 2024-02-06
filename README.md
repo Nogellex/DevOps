@@ -15,25 +15,25 @@ POSTGRES_PASSWORD=pwd
 
 ### CMD Build:
 
-```docker
+```bash
 docker build -t nogellex/db .
 ```
 
 ### Create Network:
 
-```docker
+```bash
 docker network create app-network
 ```
 
 ### RUN without persistance:
 
-```docker
+```bash
 docker run -p 15432:5432 --network app-network --name db nogellex/db
 ```
 
 ### Adminer:
 
-```docker
+```bash
 docker run \
 -p "8090:8080" \
 --net=app-network \
@@ -289,13 +289,13 @@ volumes:
 
 - 1-3 Document docker-compose most important commands.
     
-    ```
+    ```bash
     docker compose build
     ```
     
     => to build your containers and gather all informations necessary
     
-    ```
+    ```bash
     docker compose up -d
     ```
     
