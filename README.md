@@ -258,7 +258,6 @@ services:
     container_name: java_b_api
     build:
       context: TP1_2/simple-api-student-main
-      dockerfile: b_api.dockerfile
     networks:
       - tp1
     depends_on:
@@ -282,9 +281,9 @@ services:
       - backend
 
 networks:
-	 tp1:
+  tp1:
 volumes:
-	 db:
+  db:
 ```
 
 - 1-3 Document docker-compose most important commands.

@@ -5,7 +5,7 @@ services:
     container_name: java_b_api
     build:
       context: TP1_2/simple-api-student-main
-      dockerfile: b_api.dockerfile
+      dockerfile: TP1_2/simple-api-student-main/Dockerfile
     networks:
       - tp1
     depends_on:
