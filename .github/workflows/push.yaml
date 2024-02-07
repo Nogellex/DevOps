@@ -48,3 +48,11 @@ jobs:
 
           tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-http:latest
           push: ${{ github.ref == 'refs/heads/master' }}
+
+      - name: Build image and push front
+        uses: docker/build-push-action@v3
+        with:
+          context: ./devops-front-main
+
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-front:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
