@@ -505,7 +505,7 @@ ansible-galaxy init roles/docker
 
 
 **Deploy your App**
-**Launch proxy**
+**Exemple Launch proxy**
 ```yaml
 ---
 # tasks file for roles/launch-proxy
@@ -518,4 +518,51 @@ ansible-galaxy init roles/docker
     networks:
       - name: tp1
 ```
-**Launch App**
+**Front**
+Add front and a role
+```yaml
+---
+# tasks file for roles/launch-proxy
+- name: Run Proxy
+  community.docker.docker_container:
+    name: https-1
+    image: nogellex/tp2-http:latest
+    ports:
+      - "80:80"
+      - "8080:8080"
+    networks:
+      - name: tp1
+    pull: true
+    recreate: true
+```
+Modification httpd.conf
+```
+<VirtualHost *:80>
+    ServerName localhost
+    ProxyPreserveHost On
+    ProxyPass / http://front:80/
+    ProxyPassReverse / http://front:80/
+</VirtualHost>
+
+Listen 8080
+<VirtualHost *:8080>
+    ServerName localhost
+    ProxyPreserveHost On
+    ProxyPass / http://java_b_api:8080/
+    ProxyPassReverse / http://java_b_api:8080/
+</VirtualHost>
+
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+```
+Add image in workflows
+```yaml
+      - name: Build image and push front
+        uses: docker/build-push-action@v3
+        with:
+          context: ./devops-front-main
+
+          tags: ${{secrets.DOCKERHUB_USERNAME}}/tp2-front:latest
+          push: ${{ github.ref == 'refs/heads/master' }}
+```
+![front.png](images%2Ffront.png)

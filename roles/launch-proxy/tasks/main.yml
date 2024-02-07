@@ -6,6 +6,7 @@
     image: nogellex/tp2-http:latest
     ports:
       - "80:80"
+      - "8080:8080"
     networks:
       - name: tp1
     pull: true
