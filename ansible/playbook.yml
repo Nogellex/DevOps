@@ -8,3 +8,4 @@
     - ./roles/launch-app
     - ./roles/launch-proxy
     - ./roles/launch-database
+    - ./roles/front
