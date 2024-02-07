@@ -411,3 +411,111 @@ jobs:
 **in main.yaml**
 
 ![Sonar.png](images%2FSonar.png)
+
+
+SPLIT
+
+
+
+
+
+
+# TP3 Ansible
+**Inventories**
+
+**setup.yml**
+```yaml
+all:
+ vars:
+   ansible_user: centos
+   ansible_ssh_private_key_file: /home/tp/DevOps/id_rsa
+ children:
+   prod:
+     hosts: leo.barbier.takima.cloud
+```
+- 3-1 Document your inventory and base commands
+  
+**Facts**
+![facts.png](images%2Ffacts.png)
+**Playbooks**
+```yaml
+- hosts: all
+  gather_facts: false
+  become: true
+
+  tasks:
+   - name: Test connection
+     ping:
+
+```
+![playbooks.png](images%2Fplaybooks.png)
+
+**advanced playbooks**
+```yaml
+- hosts: all
+  gather_facts: false
+  become: true
+
+# Install Docker
+  tasks:
+
+  - name: Install device-mapper-persistent-data
+    yum:
+      name: device-mapper-persistent-data
+      state: latest
+
+  - name: Install lvm2
+    yum:
+      name: lvm2
+      state: latest
+
+  - name: add repo docker
+    command:
+      cmd: sudo yum-config-manager --add-repo=https://download.docker.com/linux/centos/docker-ce.repo
+
+  - name: Install Docker
+    yum:
+      name: docker-ce
+      state: present
+
+  - name: Install python3
+    yum:
+      name: python3
+      state: present
+
+  - name: Install docker with Python 3
+    pip:
+      name: docker
+      executable: pip3
+    vars:
+      ansible_python_interpreter: /usr/bin/python3
+
+  - name: Make sure Docker is running
+    service: name=docker state=started
+    tags: docker
+
+```
+![advanced playbooks.png](images%2Fadvanced%20playbooks.png)
+**using roles**
+```bash
+ansible-galaxy init roles/docker
+```
+![roles.png](images%2Froles.png)
+- 3-2 Document your playbook
+
+
+**Deploy your App**
+**Launch proxy**
+```yaml
+---
+# tasks file for roles/launch-proxy
+- name: Run Proxy
+  community.docker.docker_container:
+    name: https-1
+    image: nogellex/tp2-http:latest
+    ports:
+      - "80:80"
+    networks:
+      - name: tp1
+```
+**Launch App**
