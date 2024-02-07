@@ -1,0 +1,24 @@
+name: CICD
+on:
+  #to begin you want to launch this job in main and develop
+  push:
+    branches: [master, develop]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2.5.0
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath
+          playbook: playbook.yml
+          # Optional, directory where playbooks live
+          directory: ./ansible
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          # Optional, literal inventory file contents
+          inventory: |
+            [all]
+            centos@leo.barbier.takima.cloud
