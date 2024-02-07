@@ -1,0 +1,13 @@
+---
+# tasks file for roles/launch-database
+- name: Run DB
+  community.docker.docker_container:
+    name: db
+    image: nogellex/tp2-database:latest
+    networks:
+      - name: tp1
+    env:
+      POSTGRES_NAME: "{{ name }}"
+      POSTGRES_DB: "{{ db }}"
+      POSTGRES_USER: "{{ usr }}"
+      POSTGRES_PASSWORD: "{{ pwd }}"

@@ -1,0 +1,10 @@
+- hosts: all
+  gather_facts: false
+  become: true
+
+  roles:
+    - ./roles/docker
+    - ./roles/create-network
+    - ./roles/launch-app
+    - ./roles/launch-proxy
+    - ./roles/launch-database

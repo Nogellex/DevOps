@@ -1,0 +1,13 @@
+---
+# tasks file for roles/launch-app
+- name: Run app
+  community.docker.docker_container:
+    name: java_b_api
+    image: nogellex/tp2-devops-simple-api-main:latest
+    networks:
+      - name: tp1
+    env:
+      POSTGRES_NAME: "{{ name }}"
+      POSTGRES_DB: "{{ db }}"
+      POSTGRES_USER: "{{ usr }}"
+      POSTGRES_PASSWORD: "{{ pwd }}"

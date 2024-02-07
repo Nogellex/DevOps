@@ -1,0 +1,10 @@
+---
+# tasks file for roles/launch-proxy
+- name: Run Proxy
+  community.docker.docker_container:
+    name: https-1
+    image: nogellex/tp2-http:latest
+    ports:
+      - "80:80"
+    networks:
+      - name: tp1
