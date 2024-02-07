@@ -1,2 +1,11 @@
 ---
-# tasks file for roles/launch-front
+# tasks file for roles/launch-database
+- name: Run front
+  community.docker.docker_container:
+    name: front
+    image: nogellex/tp2-front:latest
+    networks:
+      - name: tp1
+    pull: true
+    recreate: true
+

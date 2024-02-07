@@ -8,3 +8,5 @@
       - "80:80"
     networks:
       - name: tp1
+    pull: true
+    recreate: true
