@@ -26,7 +26,7 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -H leo.barbier.takima.cloud >> ~/.ssh/known_hosts
           echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/id_rsa
         env:
           SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
 
