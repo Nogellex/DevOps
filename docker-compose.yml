@@ -5,7 +5,7 @@ services:
     container_name: java_b_api
     build:
       context: TP1_2/simple-api-student-main
-      dockerfile: TP1_2/simple-api-student-main/Dockerfile
+      dockerfile: Dockerfile
     networks:
       - tp1
     depends_on:
@@ -33,6 +33,17 @@ services:
     build: TP1_http
     ports:
       - "80:80"
+      - "8080:8080"
+    networks:
+      - tp1
+    depends_on:
+      - frontend
+
+
+  frontend:
+    container_name: front
+    build:
+      context: ./devops-front-main
     networks:
       - tp1
     depends_on:
