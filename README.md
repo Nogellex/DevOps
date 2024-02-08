@@ -566,3 +566,41 @@ Add image in workflows
           push: ${{ github.ref == 'refs/heads/master' }}
 ```
 ![front.png](images%2Ffront.png)
+
+CICD
+````yaml
+name: CICD ansible
+
+on:
+  workflow_run:
+    workflows:
+      - push
+    types:
+      - completed
+    branches:
+      - master
+
+jobs:
+  deploy-to-ansible:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+
+      - name: Install Python + Pip + Ansible
+        run: sudo apt install python3-pip && sudo apt install ansible
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H leo.barbier.takima.cloud >> ~/.ssh/known_hosts
+          echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/id_rsa
+          chmod 600 ~/id_rsa
+        env:
+          SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+
+      - name: Deploy application
+        run: ansible-playbook -i ./ansible/inventories/setup.yml ./ansible/playbook.yml
+````
